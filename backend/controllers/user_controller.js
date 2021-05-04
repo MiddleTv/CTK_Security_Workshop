@@ -1,7 +1,8 @@
 var express = require('express');
 var router = express.Router();
-var userAccounts = [];
-const { v4: uuidv4 } = require('uuid');
+var db = require('../db');
+
+
 /**
  * user body
  * {
@@ -23,21 +24,22 @@ router.post('/login', function(req, res) {
         }
     } else {
         res.send("user not found")
-    } 
+    }
 });
 
-router.post('/create', function(req, res) {
+router.post('/create', async function(req, resp) {
     const param = req.body;
-    if (!doesExist(param["username"])){
+    const exists = await db.check_exists(req.body["username"]);
+    console.log("user exists: " + exists);
+    if (!exists){
         var account = new Object();
         account.username = req.body["username"];
         account.password = req.body["password"];
-        account._id = uuidv4();
-        account.todo = [];
-        userAccounts.push(account);
-        res.json({"token": account._id})
+        const result = await db.add_user(account);
+        console.log("returned: " + result)
+        resp.json(result)
     } else {
-        res.json({"message":"username taken."});
+        resp.json({"message" : "username taken."});
     }
 });
 
@@ -48,15 +50,3 @@ router.get('/create', function (req, res) {
 
 module.exports = router;
 module.exports.userAccounts = userAccounts;
-
-function doesExist(username) {
-    var found = false;
-    for (userIndex in userAccounts) {
-        const user = userAccounts[userIndex];
-        if (user.username === username) {
-            found = true;
-            break;
-        }
-    }
-    return found;
-}

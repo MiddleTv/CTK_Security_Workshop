@@ -1,4 +1,4 @@
 - Build image
-  - `docker build -t sec-ws-image .`
+  - `docker build -t ctk-ws-image .`
 - Run image
-  - `docker run -d --name sec-ws-container -p 5432:5432 sec-ws-image`
+  - `docker run -d --name ctk-ws-db -p 5432:5432 ctk-wss-image`
