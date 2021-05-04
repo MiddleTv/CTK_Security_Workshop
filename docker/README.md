@@ -1,0 +1,4 @@
+- Build image
+  - `docker build -t sec-ws-image .`
+- Run image
+  - `docker run -d --name sec-ws-container -p 5432:5432 sec-ws-image`
